@@ -1,0 +1,90 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.oscarg798",
+    "module": "shipbotPlugin",
+    "version": "1.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.6.1",
+      "buildId": "i4appl7d75bhvic7a3c3q4c7ge"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.4.30"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shipbotPlugin-1.0.0-SNAPSHOT.jar",
+          "url": "shipbotPlugin-1.0.0-SNAPSHOT.jar",
+          "size": 36852,
+          "sha512": "15cc5a6b555f3af334429264b56a7fc04ab733b05f0bd36e8f946422e45d2ac7b522043654bf2dd97284c56cec07d2377d8ed668aab5e7a6d2bd313658b3c2ec",
+          "sha256": "72932b38e56f057ee437ba3c9609167808578e2dbcf3a7873f05f0ae4c954235",
+          "sha1": "099afb151c71bdeac6b46ec93f8e1a0d8604f683",
+          "md5": "07bb3bd91c8cbda8ecfe935eaee5b6f4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.oscarg798",
+          "module": "shipbot",
+          "version": {
+            "requires": "1.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.4.30"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shipbotPlugin-1.0.0-SNAPSHOT.jar",
+          "url": "shipbotPlugin-1.0.0-SNAPSHOT.jar",
+          "size": 36852,
+          "sha512": "15cc5a6b555f3af334429264b56a7fc04ab733b05f0bd36e8f946422e45d2ac7b522043654bf2dd97284c56cec07d2377d8ed668aab5e7a6d2bd313658b3c2ec",
+          "sha256": "72932b38e56f057ee437ba3c9609167808578e2dbcf3a7873f05f0ae4c954235",
+          "sha1": "099afb151c71bdeac6b46ec93f8e1a0d8604f683",
+          "md5": "07bb3bd91c8cbda8ecfe935eaee5b6f4"
+        }
+      ]
+    }
+  ]
+}
