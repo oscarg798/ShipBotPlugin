@@ -11,15 +11,17 @@
 package com.oscarg798.plugin.tasks.factory.taksbuilders
 
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.ParamFinder
 import com.oscarg798.plugin.tasks.unittestrunner.UnitTestRunner
+import com.oscarg798.plugin.utils.BuildType
 
 internal class UnitTestRunnerTaskBuilder(
     private val shipCommandExecutor: ShipCommandExecutor,
-    private val buildTypeParamFinder: BuildTypeParamFinder
+    private val buildTypeParamFinder: ParamFinder<BuildType>
 ) :
     TaskBuilder<UnitTestRunner> {
 
     override fun build(properties: Map<String, *>): UnitTestRunner {
-        return UnitTestRunner(shipCommandExecutor, buildTypeParamFinder.getBuildType(properties))
+        return UnitTestRunner(shipCommandExecutor, buildTypeParamFinder.get(properties))
     }
 }

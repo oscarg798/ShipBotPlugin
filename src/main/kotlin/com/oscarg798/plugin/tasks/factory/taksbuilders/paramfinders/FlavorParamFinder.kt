@@ -8,14 +8,23 @@
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.oscarg798.plugin.tasks.plublisher
+package com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders
 
-internal data class FirebasePublisherParams(
-    val projectName: String,
-    val buildType: String,
-    val firebaseToken: String,
-    val firebaseProjectId: String,
-    val flavor: String? = null,
-    val distributionGroup: String? = null,
-    val notes: String? = null
-)
+import com.oscarg798.plugin.extension.ShipBotPluginExtension
+import com.oscarg798.plugin.utils.Flavor
+
+internal class FlavorParamFinder(shipBotPluginExtension: ShipBotPluginExtension) :
+    ParamFinder<Flavor?>(shipBotPluginExtension) {
+
+
+    override fun get(properties: Map<String, *>): Flavor? {
+        val flavor = properties[FLAVOR_PARAM_NAME]?.toString()
+
+        return when {
+            flavor == null || shipBotPluginExtension.flavors.contains(flavor) -> flavor
+            else -> onError("The flavor $flavor is not supported, review your plugin configuration")
+        }
+    }
+}
+
+private const val FLAVOR_PARAM_NAME = "flavor"

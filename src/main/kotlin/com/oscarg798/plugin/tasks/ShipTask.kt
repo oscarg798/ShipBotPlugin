@@ -12,6 +12,7 @@ package com.oscarg798.plugin.tasks
 
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.utils.BuildType
+import com.oscarg798.plugin.utils.Flavor
 import com.oscarg798.plugin.utils.ShipTaskArguments
 
 internal abstract class ShipTask(private val shipCommandExecutor: ShipCommandExecutor){
@@ -27,6 +28,8 @@ internal abstract class ShipTask(private val shipCommandExecutor: ShipCommandExe
     protected fun String.toCommandArguments() = split(SPLIT_PARAM)
 
     protected fun BuildType.getCapitalizedBuildType() = toLowerCase().capitalize()
+
+    protected fun Flavor.getCapitalizedFlavor() = toLowerCase().capitalize()
 }
 
 const val GRADLE_WRAPPER_TASK = "./gradlew"

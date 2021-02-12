@@ -13,16 +13,21 @@ package com.oscarg798.plugin.tasks.buildgenerator
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.tasks.GRADLE_WRAPPER_TASK
 import com.oscarg798.plugin.tasks.ShipTask
+import com.oscarg798.plugin.utils.Flavor
 import com.oscarg798.plugin.utils.ShipTaskArguments
 
 internal class BuildGenerator(
     shipCommandExecutor: ShipCommandExecutor,
-    private val buildType: String
+    private val buildType: String,
+    private val flavor: Flavor?,
 ) : ShipTask(shipCommandExecutor) {
 
     override fun getCommand(): String = GRADLE_WRAPPER_TASK
-    override fun getParams(): ShipTaskArguments =
+    override fun getParams(): ShipTaskArguments = if (flavor != null) {
+        "$BUILD_TASK_PREFIX${flavor.getCapitalizedFlavor()}${buildType.getCapitalizedBuildType()}".toCommandArguments()
+    } else {
         "$BUILD_TASK_PREFIX${buildType.getCapitalizedBuildType()}".toCommandArguments()
+    }
 }
 
 private const val BUILD_TASK_PREFIX = "assemble"

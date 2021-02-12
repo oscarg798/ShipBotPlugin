@@ -27,7 +27,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.oscarg798:shipbot:1.0-SNAPSHOT")
     testImplementation("org.amshove.kluent:kluent:1.4")
     testImplementation("io.mockk:mockk:1.10.5")
     testImplementation(kotlin("test-junit"))
@@ -43,8 +42,8 @@ tasks.withType<KotlinCompile>() {
 
 gradlePlugin {
     plugins {
-        create("shipbotPlugin"){
-            id = "com.oscarg798.plugin"
+        create("shipBotPlugin"){
+            id = "shipBot"
             implementationClass = "com.oscarg798.plugin.ShipBotPlugin"
             version = "1.0.0-SNAPSHOT"
         }

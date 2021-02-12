@@ -13,3 +13,4 @@ package com.oscarg798.plugin.utils
 typealias BuildType = String
 typealias ShipTaskArguments = List<String>
 typealias Command = String
+typealias Flavor = String

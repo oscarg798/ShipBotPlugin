@@ -12,14 +12,22 @@ package com.oscarg798.plugin.tasks.factory.taksbuilders
 
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.tasks.buildgenerator.BuildGenerator
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.ParamFinder
+import com.oscarg798.plugin.utils.BuildType
+import com.oscarg798.plugin.utils.Flavor
 
 internal class BuildGeneratorTaskBuilder(
     private val shipCommandExecutor: ShipCommandExecutor,
-    private val buildTypeParamFinder: BuildTypeParamFinder
+    private val buildTypeParamFinder: ParamFinder<BuildType>,
+    private val flavorParamFinder: ParamFinder<Flavor?>
 ) :
     TaskBuilder<BuildGenerator> {
 
     override fun build(properties: Map<String, *>): BuildGenerator {
-        return BuildGenerator(shipCommandExecutor, buildTypeParamFinder.getBuildType(properties))
+        return BuildGenerator(
+            shipCommandExecutor,
+            buildTypeParamFinder.get(properties),
+            flavorParamFinder.get(properties)
+        )
     }
 }

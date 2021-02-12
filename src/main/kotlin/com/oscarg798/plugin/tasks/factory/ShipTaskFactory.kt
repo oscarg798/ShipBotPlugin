@@ -15,25 +15,41 @@ import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.extension.ShipBotPluginExtension
 import com.oscarg798.plugin.tasks.ShipTask
 import com.oscarg798.plugin.tasks.factory.taksbuilders.BuildGeneratorTaskBuilder
-import com.oscarg798.plugin.tasks.factory.taksbuilders.BuildTypeParamFinder
 import com.oscarg798.plugin.tasks.factory.taksbuilders.FirebasePublisherTaskBuilder
 import com.oscarg798.plugin.tasks.factory.taksbuilders.UnitTestRunnerTaskBuilder
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.BuildTypeParamFinder
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.ParamFinder
+import com.oscarg798.plugin.utils.BuildType
+import com.oscarg798.plugin.utils.Flavor
 import java.util.*
 
 internal class ShipTaskFactory(
+    private val projectName: String,
     private val properties: Map<String, *>,
-    private val extension: ShipBotPluginExtension
+    private val extension: ShipBotPluginExtension,
+    private val buildTypeParamFinder: ParamFinder<BuildType>,
+    private val flavorTypeParamFinder: ParamFinder<Flavor?>
+
 ) {
 
     private val shipCommandExecutor: ShipCommandExecutor = ProcessShipCommandExecutor()
 
     fun createTasks(): Collection<ShipTask> {
 
-        val buildTypeFinder = BuildTypeParamFinder(extension)
 
-        val buildGeneratorTask = BuildGeneratorTaskBuilder(shipCommandExecutor, buildTypeFinder).build(properties)
+        val buildGeneratorTask = BuildGeneratorTaskBuilder(
+            shipCommandExecutor,
+            buildTypeParamFinder,
+            flavorTypeParamFinder
+        ).build(properties)
         val firebasePublisherTask =
-            FirebasePublisherTaskBuilder(extension, shipCommandExecutor, buildTypeFinder).build(properties)
+            FirebasePublisherTaskBuilder(
+                projectName,
+                extension,
+                shipCommandExecutor,
+                buildTypeParamFinder,
+                flavorTypeParamFinder
+            ).build(properties)
 
         val tasks = LinkedList<ShipTask>()
         tasks.add(buildGeneratorTask)
@@ -42,7 +58,11 @@ internal class ShipTaskFactory(
 
         return if (extension.unitTestRequired) {
             tasks.apply {
-                addFirst(UnitTestRunnerTaskBuilder(shipCommandExecutor, buildTypeFinder).build(properties))
+                addFirst(
+                    UnitTestRunnerTaskBuilder(shipCommandExecutor, BuildTypeParamFinder(extension)).build(
+                        properties
+                    )
+                )
             }
         } else {
             tasks

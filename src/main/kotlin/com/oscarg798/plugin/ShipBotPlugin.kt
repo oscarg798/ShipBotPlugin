@@ -12,6 +12,8 @@ package com.oscarg798.plugin
 
 import com.oscarg798.plugin.extension.ShipBotPluginExtension
 import com.oscarg798.plugin.tasks.factory.ShipTaskFactory
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.BuildTypeParamFinder
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.FlavorParamFinder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -19,7 +21,13 @@ internal class ShipBotPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val extension = configureExtension(project)
-        val taskFactory = ShipTaskFactory(project.properties, extension)
+        val taskFactory = ShipTaskFactory(
+            project.name,
+            project.properties,
+            extension,
+            BuildTypeParamFinder(extension),
+            FlavorParamFinder(extension)
+        )
 
         project.task(TASK_NAME).dependsOn(project.tasks.findByName(CLEAN_TASK_NAME))
             .doFirst {

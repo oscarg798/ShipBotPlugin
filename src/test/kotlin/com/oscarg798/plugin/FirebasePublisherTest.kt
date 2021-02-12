@@ -56,15 +56,63 @@ class FirebasePublisherTest {
         verify { shipCommandExecutor.execute("firebase", ARGUMENTS_WITH_ALL_PARAMS.toArguments(), 10) }
     }
 
+
+    @Test
+    fun `given params with all the values and flavor when get arguments is called then it should output the right params`() {
+        publisher = FirebasePublisher(shipCommandExecutor, PARAMS.copy(flavor = FLAVOR))
+        publisher.getParams() shouldEqual ARGUMENTS_WITH_ALL_PARAMS_AND_FLAVOR.split(" ")
+    }
+
+    @Test
+    fun `given params without distribution group but with flavor and flavor when get arguments is called then it should output the right params`() {
+        publisher = FirebasePublisher(shipCommandExecutor, PARAMS.copy(flavor = FLAVOR, distributionGroup = null))
+        publisher.getParams() shouldEqual ARGUMENTS_WITH_NOTES_BUT_WITHOUT_DISTRIBUTION_GROUP_BUT_WITH_FLAVOR.split(" ")
+    }
+
+    @Test
+    fun `given params without notes but with flavor and flavor when get arguments is called then it should output the right params`() {
+        publisher = FirebasePublisher(shipCommandExecutor, PARAMS.copy(flavor = FLAVOR, notes = null))
+        publisher.getParams() shouldEqual ARGUMENTS_WITH_DISTRIBUTION_GROUP_WITHOUT_NOTES_BUT_WITH_FLAVOR.split(" ")
+    }
+
+    @Test
+    fun `given params without notes and distribution group but with flavor and flavor when get arguments is called then it should output the right params`() {
+        publisher = FirebasePublisher(shipCommandExecutor, PARAMS.copy(flavor = FLAVOR, notes = null, distributionGroup = null))
+        publisher.getParams() shouldEqual ARGUMENTS_WITHOUT_NOTES_AND_DISTRIBUTION_GROUP_BUT_WITH_FLAVOR.split(" ")
+    }
+
+
     private fun String.toArguments() = split(" ")
 }
 
-private const val ARGUMENTS_WITHOUT_NOTES_AND_DISTRIBUTION_GROUP =
-    "appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --app 2 --token 1"
-private const val ARGUMENTS_WITH_DISTRIBUTION_GROUP_WITHOUT_NOTES =
-    "appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --app 2 --token 1 --groups 3"
-private const val ARGUMENTS_WITH_NOTES_BUT_WITHOUT_DISTRIBUTION_GROUP =
-    "appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --app 2 --token 1 --release-notes 4_4"
+private const val FLAVOR = "fLavoR"
+private const val PROJECT_NAME = "Good_Name"
+
+//ARGUMENTS WITHOUT FLAVOR
 private const val ARGUMENTS_WITH_ALL_PARAMS =
-    "appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --app 2 --token 1 --groups 3 --release-notes 4_4"
-private val PARAMS = FirebasePublisherParams("debug", "1", "2", "3", "4 4")
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/debug/$PROJECT_NAME-debug.apk --app 2 --token 1 --groups 3 --release-notes 4_4"
+private const val ARGUMENTS_WITH_NOTES_BUT_WITHOUT_DISTRIBUTION_GROUP =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/debug/$PROJECT_NAME-debug.apk --app 2 --token 1 --release-notes 4_4"
+private const val ARGUMENTS_WITH_DISTRIBUTION_GROUP_WITHOUT_NOTES =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/debug/$PROJECT_NAME-debug.apk --app 2 --token 1 --groups 3"
+private const val ARGUMENTS_WITHOUT_NOTES_AND_DISTRIBUTION_GROUP =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/debug/$PROJECT_NAME-debug.apk --app 2 --token 1"
+
+//ARGUMENTS WITH FLAVOR
+private const val ARGUMENTS_WITH_ALL_PARAMS_AND_FLAVOR =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/flavor/debug/$PROJECT_NAME-flavor-debug.apk --app 2 --token 1 --groups 3 --release-notes 4_4"
+private const val ARGUMENTS_WITH_NOTES_BUT_WITHOUT_DISTRIBUTION_GROUP_BUT_WITH_FLAVOR =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/flavor/debug/$PROJECT_NAME-flavor-debug.apk --app 2 --token 1 --release-notes 4_4"
+private const val ARGUMENTS_WITH_DISTRIBUTION_GROUP_WITHOUT_NOTES_BUT_WITH_FLAVOR =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/flavor/debug/$PROJECT_NAME-flavor-debug.apk --app 2 --token 1 --groups 3"
+private const val ARGUMENTS_WITHOUT_NOTES_AND_DISTRIBUTION_GROUP_BUT_WITH_FLAVOR =
+    "appdistribution:distribute $PROJECT_NAME/build/outputs/apk/flavor/debug/$PROJECT_NAME-flavor-debug.apk --app 2 --token 1"
+
+private val PARAMS = FirebasePublisherParams(
+    projectName = PROJECT_NAME,
+    buildType = "debug",
+    firebaseToken = "1",
+    firebaseProjectId = "2",
+    distributionGroup = "3",
+    notes = "4 4"
+)

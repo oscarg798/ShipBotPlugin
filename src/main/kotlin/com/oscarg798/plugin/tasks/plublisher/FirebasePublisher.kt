@@ -12,7 +12,6 @@ package com.oscarg798.plugin.tasks.plublisher
 
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.tasks.ShipTask
-import com.oscarg798.plugin.utils.BuildType
 import com.oscarg798.plugin.utils.ShipTaskArguments
 
 
@@ -30,7 +29,7 @@ internal class FirebasePublisher(
         .addReleaseNotes()
 
     private fun addApk() =
-        "appdistribution:distribute ${firebasePublisherParams.buildType.getReleasePathFromBuildType()}".toCommandArguments()
+        "appdistribution:distribute ${getReleasePathFromBuildType()}".toCommandArguments()
 
     private fun ShipTaskArguments.addProjectId() = toMutableList().apply {
         addAll("--app ${firebasePublisherParams.firebaseProjectId}".toCommandArguments())
@@ -60,13 +59,15 @@ internal class FirebasePublisher(
         }
     }
 
-    private fun BuildType.getReleasePathFromBuildType() =
-        "$PATH_FIRST_PATH${toLowerCase()}/app-${toLowerCase()}.$BUILD_EXTENSION"
+    private fun getReleasePathFromBuildType() = if (firebasePublisherParams.flavor != null) {
+        "${firebasePublisherParams.projectName}$PATH_FIRST_PATH${firebasePublisherParams.flavor.toLowerCase()}/${firebasePublisherParams.buildType.toLowerCase()}/${firebasePublisherParams.projectName}-${firebasePublisherParams.flavor.toLowerCase()}-${firebasePublisherParams.buildType.toLowerCase()}.$BUILD_EXTENSION"
+    } else {
+        "${firebasePublisherParams.projectName}$PATH_FIRST_PATH${firebasePublisherParams.buildType.toLowerCase()}/${firebasePublisherParams.projectName}-${firebasePublisherParams.buildType.toLowerCase()}.$BUILD_EXTENSION"
+    }
 }
 
 private const val SNAKE = "_"
 private const val SPACE = " "
 private const val BUILD_EXTENSION = "apk"
-private const val PATH_FIRST_PATH = "app/build/outputs/apk/"
+private const val PATH_FIRST_PATH = "/build/outputs/apk/"
 private const val FIREBASE_COMMAND_NAME = "firebase"
-private const val PROPERTIES_FILE = "local.properties"

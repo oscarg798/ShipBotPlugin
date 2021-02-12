@@ -14,6 +14,7 @@ package com.oscarg798.plugin.extension
 internal open class ShipBotPluginExtension {
 
     var buildTypes: List<String> = listOf(DEFAULT_BUILD_TYPE)
+    var flavors: List<String> = listOf()
     var firebaseToken: String? = null
     var unitTestRequired: Boolean = true
 }

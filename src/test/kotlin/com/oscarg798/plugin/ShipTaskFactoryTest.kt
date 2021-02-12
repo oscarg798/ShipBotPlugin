@@ -13,6 +13,8 @@ package com.oscarg798.plugin
 import com.oscarg798.plugin.extension.ShipBotPluginExtension
 import com.oscarg798.plugin.tasks.buildgenerator.BuildGenerator
 import com.oscarg798.plugin.tasks.factory.ShipTaskFactory
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.BuildTypeParamFinder
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.FlavorParamFinder
 import com.oscarg798.plugin.tasks.plublisher.FirebasePublisher
 import com.oscarg798.plugin.tasks.unittestrunner.UnitTestRunner
 import io.mockk.every
@@ -26,17 +28,21 @@ internal class ShipTaskFactoryTest {
     private lateinit var factory: ShipTaskFactory
     private val properties: Map<String, *> = mockk()
     private val extension: ShipBotPluginExtension = mockk()
+    private val buildTypeFinder = BuildTypeParamFinder(extension)
+    private val flavorFinder = FlavorParamFinder(extension)
 
     @Before
     fun setup() {
+        every { extension.flavors } answers { SUPPORTED_FLAVORS }
         every { extension.unitTestRequired } answers { true }
         every { extension.firebaseToken } answers { TOKEN }
         every { extension.buildTypes } answers { SUPPORTED_BUILD_TYPES }
+        every { properties["flavor"] } answers { null }
         every { properties["builtType"] } answers { SUPPORTED_BUILD_TYPES.first() }
         every { properties["firebaseProjectId"] } answers { PROJECT_ID }
         every { properties["distributionGroup"] } answers { DISTRIBUTION_GROUP }
         every { properties["notes"] } answers { NOTES }
-        factory = ShipTaskFactory(properties, extension)
+        factory = ShipTaskFactory(PROJECT_NAME, properties, extension, buildTypeFinder, flavorFinder)
 
     }
 
@@ -60,7 +66,7 @@ internal class ShipTaskFactoryTest {
         (tasks[1] is FirebasePublisher) shouldEqual true
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `when no buildType is provided then it should crash`() {
         every { properties["builtType"] } answers { null }
 
@@ -74,7 +80,7 @@ internal class ShipTaskFactoryTest {
         factory.createTasks()
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `when firebase  token is  not provided then it should crash`() {
         every { extension.firebaseToken } answers { null }
 
@@ -88,17 +94,26 @@ internal class ShipTaskFactoryTest {
         factory.createTasks()
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `when no build type is provided then it should crash`() {
         every { properties["builtType"] } answers { null }
 
         factory.createTasks()
     }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `when wrong flavor is provided then it should crash`() {
+        every { properties["flavor"] } answers { "feo" }
+
+        factory.createTasks()
+    }
 }
 
+private const val PROJECT_NAME = "app"
 private const val PROJECT_ID = "1"
 private const val TOKEN = "token"
 private const val BUILD_TYPE = "debug"
 private const val DISTRIBUTION_GROUP = "1"
 private const val NOTES = "1"
 private val SUPPORTED_BUILD_TYPES = listOf(BUILD_TYPE)
+private val SUPPORTED_FLAVORS = listOf("flavor")

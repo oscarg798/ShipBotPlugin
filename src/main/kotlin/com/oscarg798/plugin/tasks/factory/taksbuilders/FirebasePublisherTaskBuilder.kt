@@ -12,25 +12,31 @@ package com.oscarg798.plugin.tasks.factory.taksbuilders
 
 import com.oscarg798.plugin.commandexecutrors.ShipCommandExecutor
 import com.oscarg798.plugin.extension.ShipBotPluginExtension
+import com.oscarg798.plugin.tasks.factory.taksbuilders.paramfinders.ParamFinder
 import com.oscarg798.plugin.tasks.plublisher.FirebasePublisher
 import com.oscarg798.plugin.tasks.plublisher.FirebasePublisherParams
+import com.oscarg798.plugin.utils.BuildType
+import com.oscarg798.plugin.utils.Flavor
 
 internal class FirebasePublisherTaskBuilder(
+    private val projectName: String,
     private val extension: ShipBotPluginExtension,
     private val shipCommandExecutor: ShipCommandExecutor,
-    private val buildTypeParamFinder: BuildTypeParamFinder
+    private val buildTypeParamFinder: ParamFinder<BuildType>,
+    private val flavorParamFinder: ParamFinder<Flavor?>
 ) : TaskBuilder<FirebasePublisher> {
 
     override fun build(
         properties: Map<String, *>
     ): FirebasePublisher {
-        val buildType = buildTypeParamFinder.getBuildType(properties)
+        val buildType = buildTypeParamFinder.get(properties)
+        val flavor = flavorParamFinder.get(properties)
 
-        val firebaseToken = extension.firebaseToken ?: error("You should provide a firebase token")
+        val firebaseToken =
+            extension.firebaseToken ?: throw IllegalArgumentException("You should provide a firebase token")
 
         val firebaseProjectId = properties[FIREBASE_PROJECT_ID_PARAM_NAME]?.toString()
             ?: error("You should provide a firebase project id as param")
-
 
         val distributionGroup = properties[DISTRIBUTION_GROUP_PARAM_NAME]?.toString()
 
@@ -38,7 +44,15 @@ internal class FirebasePublisherTaskBuilder(
 
         return FirebasePublisher(
             shipCommandExecutor,
-            FirebasePublisherParams(buildType, firebaseToken, firebaseProjectId, distributionGroup, notes)
+            FirebasePublisherParams(
+                projectName = projectName,
+                buildType = buildType,
+                firebaseToken = firebaseToken,
+                firebaseProjectId = firebaseProjectId,
+                flavor = flavor,
+                distributionGroup = distributionGroup,
+                notes = notes
+            )
         )
     }
 }

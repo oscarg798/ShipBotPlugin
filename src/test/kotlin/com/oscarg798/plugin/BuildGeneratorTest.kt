@@ -15,7 +15,6 @@ import com.oscarg798.plugin.tasks.buildgenerator.BuildGenerator
 import io.mockk.mockk
 import io.mockk.verify
 import org.amshove.kluent.shouldEqual
-import org.junit.Before
 import org.junit.Test
 
 internal class BuildGeneratorTest {
@@ -23,25 +22,31 @@ internal class BuildGeneratorTest {
     private lateinit var buildGenerator: BuildGenerator
     private val shipCommandExecutor = mockk<ShipCommandExecutor>(relaxed = true)
 
-    @Before
-    fun setup() {
-        buildGenerator = BuildGenerator(shipCommandExecutor, BUILD_TYPE)
-    }
-
     @Test
     fun `given a build type when get arguments is invoke then it should return the right output`() {
+        buildGenerator = BuildGenerator(shipCommandExecutor, BUILD_TYPE, null)
         buildGenerator.getParams() shouldEqual ARGUMENTS
     }
 
     @Test
+    fun `given a build type and a flavor when get arguments is invoke then it should return the right output`(){
+        buildGenerator = BuildGenerator(shipCommandExecutor, BUILD_TYPE, FLAVOR)
+        buildGenerator.getParams() shouldEqual ARGUMENTS_WITH_FLAVOR
+    }
+
+    @Test
     fun `when run is invoke then it should call with the right commands`() {
+        buildGenerator = BuildGenerator(shipCommandExecutor, BUILD_TYPE, null)
         buildGenerator.run()
 
         verify {
             shipCommandExecutor.execute("./gradlew",ARGUMENTS)
         }
     }
+
 }
 
+private const val FLAVOR = "flavor"
+private val ARGUMENTS_WITH_FLAVOR = listOf("assembleFlavorMytype")
 private val ARGUMENTS = listOf("assembleMytype")
 private const val BUILD_TYPE = "mYtYpE"
