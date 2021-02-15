@@ -18,5 +18,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Create local.properties
+        run: touch local.properties &&
+             echo signing.keyId=1 >> local.properties &&
+             echo signing.password=1 >> local.properties &&
+             echo signing.secretKeyRingFile=/21 >> local.properties &&
+             echo ossrhUsername=1 >> local.properties &&
+             echo ossrhPassword=1 >> local.properties
       - name: Run a one-line script
         run: ./gradlew test

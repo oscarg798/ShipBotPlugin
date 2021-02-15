@@ -1,0 +1,83 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task pluginSources(type: Jar) {
+    archiveClassifier.set('sources')
+
+    from sourceSets.main.java.srcDirs
+    from sourceSets.main.kotlin.srcDirs
+}
+
+File secretPropsFile = project.rootProject.file('local.properties')
+Properties p = new Properties()
+new FileInputStream(secretPropsFile).withCloseable { is ->
+    p.load(is)
+}
+p.each { name, value ->
+    ext[name as String] = value as String
+}
+
+def pluginInfo = [:]
+pluginInfo.pluginGroupId = "com.oscarg798.shipbotplugin"
+pluginInfo.artifactId = "shipbot"
+pluginInfo.version = "1.0.0"
+pluginInfo.id = "shipbot"
+ext.pluginInfo = pluginInfo
+
+task projectSources(type: Jar) {
+    archiveClassifier.set('sources')
+
+    from sourceSets.main.java.srcDirs
+    from sourceSets.main.kotlin.srcDirs
+}
+
+artifacts {
+    archives projectSources
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name pluginInfo.artifactId
+                packaging 'jar'
+                description 'Plugin to publish apk to firebase'
+                url 'https://github.com/oscarg798/ShipBotPlugin'
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://github.com/oscarg798/ShipBotPlugin/tree/master/License.md'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:github.com/oscarg798/ShipBotPlugin.git'
+                    developerConnection = 'scm:git:ssh://github.com/oscarg798/ShipBotPlugin.git'
+                    url = 'https://github.com/oscarg798/ShipBotPlugin/tree/master'
+                }
+
+                developers {
+                    developer {
+                        id 'oscarg798'
+                        name 'Oscar Gallon'
+                        email 'oscarg798@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+signing {
+    sign configurations.archives
+}
