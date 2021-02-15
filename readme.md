@@ -1,4 +1,4 @@
-# ShipBot Plugin - Maven Publication pending
+# ShipBot Plugin
 
 ![CI](https://github.com/oscarg798/ShipBotPlugin/workflows/CI/badge.svg?branch=master)
 
@@ -22,9 +22,15 @@ Este plugin sirve para publicar tu `apk` a `Firebase Distribution`, se encarga d
 En el `build.gradle` principal de tu proyecto agrega lo siguiente al classpath 
 
 ```groovy 
+   repositories {
+    //other repos
+     maven {
+        url = "https://repo1.maven.org/maven2/"
+     }
+   }
    dependencies{
         //other dependencies
-        classpath "com.oscarg798:shipbotPlugin:1.0.0-SNAPSHOT"
+        classpath "com.oscarg798.shipbotplugin:shipBotPlugin:1.0.0"
    }
 ```
 
@@ -33,7 +39,7 @@ En tu modulo `app` o el modulo principa de tu aplicación
 ```groovy
     plugins { 
         //other plugins like id 'com.android.application'
-        id 'shipBot'
+        id 'shipbot'
     }
 ```
 

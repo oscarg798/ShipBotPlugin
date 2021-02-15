@@ -12,18 +12,42 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
+    `java`
     `java-gradle-plugin`
     `maven-publish`
 }
 
-group = "com.oscarg798"
-version = "1.0-SNAPSHOT"
+apply(from = "./release.gradle")
+
+val pluginInfo: Map<String, String> by extra
+
+group = pluginInfo["pluginGroupId"]
+version = pluginInfo["version"]
 
 repositories {
     jcenter()
     mavenLocal()
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
+}
+
+tasks {
+    val sourcesJar by creating(Jar::class) {
+        archiveClassifier.set("sources")
+        from(sourceSets.main.get().allSource)
+    }
+
+    val javadocJar by creating(Jar::class) {
+        dependsOn.add(javadoc)
+        archiveClassifier.set("javadoc")
+        from(javadoc)
+    }
+
+    artifacts {
+        archives(sourcesJar)
+        archives(javadocJar)
+        archives(jar)
+    }
 }
 
 dependencies {
@@ -42,10 +66,10 @@ tasks.withType<KotlinCompile>() {
 
 gradlePlugin {
     plugins {
-        create("shipBotPlugin"){
-            id = "shipBot"
+        create(pluginInfo["artifactId"]) {
+            id = pluginInfo["id"]
             implementationClass = "com.oscarg798.plugin.ShipBotPlugin"
-            version = "1.0.0-SNAPSHOT"
+            version = pluginInfo["version"]
         }
     }
 }

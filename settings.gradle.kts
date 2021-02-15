@@ -9,5 +9,5 @@
  */
 
 
-rootProject.name = "shipbotPlugin"
+rootProject.name = "shipBotPlugin"
 
